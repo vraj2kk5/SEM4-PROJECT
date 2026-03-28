@@ -26,6 +26,27 @@ export default function LoginPage() {
     setError(null)
 
     try {
+      // Mock credentials for testing
+      const MOCK_EMAIL = 'admin@22026'
+      const MOCK_PASSWORD = 'admin'
+
+      if (formData.email === MOCK_EMAIL && formData.password === MOCK_PASSWORD) {
+        // Mock user object
+        const mockUser = {
+          id: 'mock-user-123',
+          email: MOCK_EMAIL,
+          user_metadata: {
+            full_name: 'Admin User'
+          }
+        }
+        
+        setUser(mockUser)
+        setToast({ type: 'success', message: 'Login successful!' })
+        setTimeout(() => navigate('/'), 1000)
+        return
+      }
+
+      // Try real Supabase auth if not mock credentials
       const { data, error } = await authService.signIn(
         formData.email,
         formData.password
@@ -70,6 +91,12 @@ export default function LoginPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Mock Credentials Info */}
+            <div className="p-3 bg-blue-500/20 border border-blue-400/50 rounded-lg text-blue-300 text-sm">
+              <p className="font-semibold mb-1">🧪 Demo Credentials:</p>
+              <p>Email: <code className="bg-blue-900/50 px-2 py-1 rounded">admin@22026</code></p>
+              <p>Password: <code className="bg-blue-900/50 px-2 py-1 rounded">admin</code></p>
+            </div>
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">

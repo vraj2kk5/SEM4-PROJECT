@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ChevronUp, ChevronDown, Download } from 'lucide-react'
 import { dustbinService } from '../services/supabaseClient'
+import { mockDustbinService } from '../services/mockData'
 import { useAuthStore } from '../store/authStore'
 import Card from '../components/Card'
 import LoadingSkeleton from '../components/LoadingSkeleton'
@@ -15,6 +16,7 @@ export default function HistoryPage() {
   const [filterStatus, setFilterStatus] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
+  const isMockUser = user?.id === 'mock-user-123'
 
   useEffect(() => {
     if (!user) return
@@ -22,7 +24,8 @@ export default function HistoryPage() {
     const fetchLogs = async () => {
       setLoading(true)
       try {
-        const { data, error } = await dustbinService.getLogs(user.id, 1000)
+        const service = isMockUser ? mockDustbinService : dustbinService
+        const { data, error } = await service.getLogs(user.id, 1000)
 
         if (error) {
           setToast({ type: 'error', message: 'Failed to load history' })
@@ -38,7 +41,7 @@ export default function HistoryPage() {
     }
 
     fetchLogs()
-  }, [user])
+  }, [user, isMockUser])
 
   // Filter logs
   const filteredLogs = logs.filter((log) => {

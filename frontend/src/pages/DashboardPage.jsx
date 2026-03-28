@@ -16,6 +16,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { dustbinService } from '../services/supabaseClient'
+import { mockDustbinService, getMockStats } from '../services/mockData'
 import { useAuthStore } from '../store/authStore'
 import { useDashboardStore } from '../store/dashboardStore'
 import Card from '../components/Card'
@@ -28,6 +29,7 @@ export default function DashboardPage() {
   const { logs, stats, loading, setLogs, setStats, setLoading, setError } =
     useDashboardStore()
   const [toast, setToast] = useState(null)
+  const isMockUser = user?.id === 'mock-user-123'
 
   useEffect(() => {
     if (!user) return
@@ -35,7 +37,9 @@ export default function DashboardPage() {
     const fetchData = async () => {
       setLoading(true)
       try {
-        const { data, error } = await dustbinService.getLogs(user.id, 100)
+        // Use mock data for demo user
+        const service = isMockUser ? mockDustbinService : dustbinService
+        const { data, error } = await service.getLogs(user.id, 100)
 
         if (error) {
           setError(error.message)
@@ -46,16 +50,8 @@ export default function DashboardPage() {
         setLogs(data || [])
 
         // Calculate stats
-        const fullEvents = data?.filter((log) => log.status === 'full').length || 0
-        const emptyEvents = data?.filter((log) => log.status === 'empty').length || 0
-        const lastActivity = data?.[0]?.created_at || null
-
-        setStats({
-          totalUsage: data?.length || 0,
-          fullEvents,
-          emptyEvents,
-          lastActivity,
-        })
+        const calculatedStats = getMockStats(data || [])
+        setStats(calculatedStats)
       } catch (err) {
         setError(err.message)
         setToast({ type: 'error', message: 'Error loading dashboard' })
@@ -66,15 +62,17 @@ export default function DashboardPage() {
 
     fetchData()
 
-    // Subscribe to real-time updates
-    const subscription = dustbinService.subscribeToLogs(user.id, (payload) => {
-      if (payload.eventType === 'INSERT') {
-        setLogs([payload.new, ...logs])
-      }
-    })
+    // Subscribe to real-time updates (only for real users)
+    if (!isMockUser) {
+      const subscription = dustbinService.subscribeToLogs(user.id, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setLogs([payload.new, ...logs])
+        }
+      })
 
-    return () => subscription?.unsubscribe()
-  }, [user, setLogs, setStats, setLoading, setError])
+      return () => subscription?.unsubscribe()
+    }
+  }, [user, setLogs, setStats, setLoading, setError, isMockUser])
 
   // Prepare chart data
   const monthlyData = [
