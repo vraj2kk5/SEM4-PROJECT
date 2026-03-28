@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Lock, Mail, Bell, Palette, Loader } from 'lucide-react'
-import { authService } from '../services/supabaseClient'
 import { useThemeStore } from '../store/themeStore'
 import Card from '../components/Card'
 import Toast from '../components/Toast'

@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { supabase } from './services/supabaseClient'
 import { useAuthStore } from './store/authStore'
 import { useThemeStore } from './store/themeStore'
 

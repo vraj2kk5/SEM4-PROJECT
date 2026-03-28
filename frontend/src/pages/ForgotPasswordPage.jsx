@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, Loader, ArrowLeft } from 'lucide-react'
-import { authService } from '../services/supabaseClient'
 import Toast from '../components/Toast'
 
 export default function ForgotPasswordPage() {

@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
 import { LayoutDashboard, History, Settings, LogOut, X } from 'lucide-react'
-import { supabase } from '../services/supabaseClient'
 import { useAuthStore } from '../store/authStore'
 
 export default function Sidebar({ isOpen, onClose }) {

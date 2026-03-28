@@ -15,7 +15,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { dustbinService } from '../services/supabaseClient'
 import { mockDustbinService, getMockStats } from '../services/mockData'
 import { useAuthStore } from '../store/authStore'
 import { useDashboardStore } from '../store/dashboardStore'
@@ -29,7 +28,6 @@ export default function DashboardPage() {
   const { logs, stats, loading, setLogs, setStats, setLoading, setError } =
     useDashboardStore()
   const [toast, setToast] = useState(null)
-  const isMockUser = user?.id === 'mock-user-123'
 
   useEffect(() => {
     if (!user) return
@@ -37,9 +35,8 @@ export default function DashboardPage() {
     const fetchData = async () => {
       setLoading(true)
       try {
-        // Use mock data for demo user
-        const service = isMockUser ? mockDustbinService : dustbinService
-        const { data, error } = await service.getLogs(user.id, 100)
+        // Always use mock data for demo
+        const { data, error } = await mockDustbinService.getLogs(user.id, 100)
 
         if (error) {
           setError(error.message)
@@ -61,18 +58,7 @@ export default function DashboardPage() {
     }
 
     fetchData()
-
-    // Subscribe to real-time updates (only for real users)
-    if (!isMockUser) {
-      const subscription = dustbinService.subscribeToLogs(user.id, (payload) => {
-        if (payload.eventType === 'INSERT') {
-          setLogs([payload.new, ...logs])
-        }
-      })
-
-      return () => subscription?.unsubscribe()
-    }
-  }, [user, setLogs, setStats, setLoading, setError, isMockUser])
+  }, [user, setLogs, setStats, setLoading, setError])
 
   // Prepare chart data
   const monthlyData = [
