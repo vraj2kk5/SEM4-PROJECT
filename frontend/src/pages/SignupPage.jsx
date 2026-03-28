@@ -43,28 +43,18 @@ export default function SignupPage() {
     }
 
     try {
-      const { data, error } = await authService.signUp(
-        formData.email,
-        formData.password
-      )
-
-      if (error) {
-        setError(error.message)
-        setToast({ type: 'error', message: error.message })
-        return
+      // Mock user creation
+      const mockUser = {
+        id: 'mock-user-' + Math.random().toString(36).substr(2, 9),
+        email: formData.email,
+        user_metadata: {
+          full_name: formData.fullName
+        }
       }
 
-      if (data?.user) {
-        // Create user profile
-        await profileService.createProfile(data.user.id, {
-          full_name: formData.fullName,
-          email: formData.email,
-        })
-
-        setUser(data.user)
-        setToast({ type: 'success', message: 'Account created successfully!' })
-        setTimeout(() => navigate('/'), 1000)
-      }
+      setUser(mockUser)
+      setToast({ type: 'success', message: 'Account created successfully!' })
+      setTimeout(() => navigate('/'), 1000)
     } catch (err) {
       const message = err.message || 'Signup failed'
       setError(message)

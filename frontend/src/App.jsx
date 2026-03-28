@@ -22,35 +22,17 @@ function App() {
   const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
-    // Check if user is logged in
-    const checkAuth = async () => {
+    // Check if user is logged in from localStorage
+    const savedUser = localStorage.getItem('mockUser')
+    if (savedUser) {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          setUser(session.user)
-        }
+        setUser(JSON.parse(savedUser))
       } catch (error) {
-        console.error('Auth check error:', error)
-      } finally {
-        setLoading(false)
-        setIsInitialized(true)
+        console.error('Error loading user:', error)
       }
     }
-
-    checkAuth()
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session?.user) {
-          setUser(session.user)
-        } else {
-          setUser(null)
-        }
-      }
-    )
-
-    return () => subscription?.unsubscribe()
+    setLoading(false)
+    setIsInitialized(true)
   }, [setUser, setLoading])
 
   if (!isInitialized) {

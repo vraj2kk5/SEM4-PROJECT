@@ -5,10 +5,18 @@ export const useAuthStore = create((set) => ({
   loading: true,
   error: null,
 
-  setUser: (user) => set({ user }),
+  setUser: (user) => {
+    if (user) {
+      localStorage.setItem('mockUser', JSON.stringify(user))
+    }
+    set({ user })
+  },
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
   clearError: () => set({ error: null }),
 
-  logout: () => set({ user: null, error: null }),
+  logout: () => {
+    localStorage.removeItem('mockUser')
+    set({ user: null, error: null })
+  },
 }))

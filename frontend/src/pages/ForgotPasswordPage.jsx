@@ -15,17 +15,11 @@ export default function ForgotPasswordPage() {
     setLoading(true)
 
     try {
-      const { data, error } = await authService.resetPassword(email)
-
-      if (error) {
-        setToast({ type: 'error', message: error.message })
-        return
-      }
-
+      // Mock password reset
       setSubmitted(true)
       setToast({
         type: 'success',
-        message: 'Password reset link sent to your email!',
+        message: 'In demo mode - password reset is mocked. Use any credentials to login.',
       })
     } catch (err) {
       setToast({ type: 'error', message: err.message || 'Failed to send reset link' })

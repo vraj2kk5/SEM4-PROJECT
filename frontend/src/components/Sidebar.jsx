@@ -8,7 +8,7 @@ export default function Sidebar({ isOpen, onClose }) {
   const { logout } = useAuthStore()
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    localStorage.removeItem('mockUser')
     logout()
   }
 
